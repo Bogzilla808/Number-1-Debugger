@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <form action="dashboard.html" method="post" class="projectForm">
+    <div class="projectContainer">
+        <label for="projectName">Project name:</label>
+        <input type="text" id="projectName" name="projectName" required />
+        <hr>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required />
+        <hr>
+
+        <label for="repoUrl">Repo URL:</label>
+        <input type="text" id="repoUrl" name="repoUrl" required />
+        <hr>
+    
+       <button type = "button" onclick = "Project.addProject(name.value,description.value,
+       repoUrl.value)">
+            Save Project
+        </button>
+        </div>
+ </form>
+
+   
+    
+    <script src = "script2.js">
+
+    </script>
+</body>
+</html>
