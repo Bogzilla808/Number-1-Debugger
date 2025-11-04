@@ -1,0 +1,19 @@
+users (id PK, email unique, password_hash, name, created_at)
+projects (id PK, name, description, repo_url, created_by_user_id FK, created_at,
+teamMembers[]  // array of user IDs
+testers: [],
+bugs: [] );
+
+project_members (id PK, user_id FK -> users, project_id FK -> projects, role ENUM('PM','TST'), added_at)
+bugs (id PK, project_id FK, reporter_id FK->users, severity ENUM('LOW','MED','HIGH','CRITICAL'),
+      description TEXT, commit_link VARCHAR, status ENUM('OPEN','IN_PROGRESS','RESOLVED','CLOSED'),
+      assignee_id FK->users NULL, resolution_commit VARCHAR NULL, created_at, updated_at)
+
+
+Only one PM can be assigned to a bug at a time: when assigning, set assignee_id and optionally assignee_assigned_at. You can lock assignment so only PMs in project_members with role = 'PM' can set it.
+
+TST = can add bug (no ability to change status or assign).
+
+PM = can view bugs, assign to self, set resolution commit & status.
+
+Ownership: creator of project becomes PM automatically.
