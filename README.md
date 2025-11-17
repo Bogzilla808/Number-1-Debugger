@@ -68,3 +68,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Number-1-Debugger
+A bug tracking web application, featuring a database of users (testers and project members) and login system. Developed by two Computer Science students, Radu Bogdan and Ticu-Jianu Eduard.

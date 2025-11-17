@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Number 1 Debugger</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <!-- Wrapper for centering the form on screen -->
+    <div class="auth-container">
+        <h1 class="app-title">🐞 Number 1 Debugger</h1>
+  
+        <!-- Tabs for switching between Login and Register -->
+        <div class="tab-switch">
+          <button id="loginTab" class="active">Login</button>
+          <button id="registerTab">Register</button>
+        </div>
+  
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="auth-form active">
+          <input type="email" id="loginEmail" placeholder="Email" required />
+          <input type="password" id="loginPassword" placeholder="Password" required />
+          <button type="submit" class="btn">Login</button>
+        </form>
+  
+        <!-- REGISTER FORM -->
+        <form id="registerForm" class="auth-form">
+            <input type="text" id="registerName" placeholder="Full Name" required />
+            <input type="email" id="registerEmail" placeholder="Email" required />
+            <input type="password" id="registerPassword" placeholder="Password" required />
+
+            <!-- Role Selection -->
+            <div class="role-select">
+                <label for="role">Register as:</label>
+                <select id="role" required>
+                <option value="pm">Project Member (PM)</option>
+                <option value="tst">Tester (TST)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">Register</button>
+        </form>
+    </div>
+  
+    <script src="./script.js"></script>
+  </body>
+</html>

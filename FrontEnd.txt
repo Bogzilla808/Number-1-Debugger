@@ -1,0 +1,17 @@
+Login / Register
+
+Dashboard — list user’s projects (as member) and projects they can register as TST for.
+
+Project detail page:
+
+Project info, repo link, team members
+
+If PM: list of registered bugs (table)
+
+If TST: create bug form
+
+Bug detail modal/page:
+
+Fields: severity, description, commit link, reporter, assignee, status, resolution commit
+
+PM controls: assign to self, change status, add resolution commit
