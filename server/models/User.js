@@ -7,6 +7,10 @@ export const User = db.define("User", {
         primaryKey: true,
         autoIncrement: true
     },
+    name: {
+        type: DataTypes.STRING,
+        unique: true
+    },
     email: {
         type: DataTypes.STRING(200),
         allowNull: false,

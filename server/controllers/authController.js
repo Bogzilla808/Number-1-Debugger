@@ -13,7 +13,7 @@ export const registerUser = async (req, res) => {
                 password_hash: hash
             }
         );
-        res.setStatus(201).send({success: true});
+        res.status(201).send({success: true});
     } catch(err) {
         res.status(400).json({error: err.message});        
     }
