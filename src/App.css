@@ -36,3 +36,71 @@
     transform: rotate(360deg);
   }
 }
+
+/* Header container */
+.header {
+  position: fixed;      /* always stays at the top */
+  top: 0;
+  left: 0;
+  width: 100%;          /* full screen width */
+  height: 60px;         /* adjust height as needed */
+  background-color: #222; /* dark header */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;      /* left/right padding */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1000;        /* ensures it stays above other content */
+}
+
+/* Logo button */
+.header .logo-btn {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* User info section (name, role, dropdown) */
+.header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative; /* for dropdown positioning */
+}
+
+/* Account dropdown */
+.header .account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #333;
+  padding: 0.5rem 1rem;
+  display: none;        /* hidden by default */
+  flex-direction: column;
+  border-radius: 5px;
+}
+
+.header .user-info:hover .account-dropdown {
+  display: flex;        /* show dropdown on hover */
+}
+
+.header .account-dropdown button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  text-align: left;
+}
+
+.header .account-dropdown button:hover {
+  text-decoration: underline;
+}
+
+/* Add padding to the top of the page to prevent content hiding behind the fixed header */
+.main-content {
+  padding-top: 70px; /* should be slightly more than header height */
+}

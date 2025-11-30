@@ -9,7 +9,8 @@ export const User = db.define("User", {
     },
     name: {
         type: DataTypes.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
     },
     email: {
         type: DataTypes.STRING(200),
@@ -24,6 +25,10 @@ export const User = db.define("User", {
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+    },
+    role: {
+        type: DataTypes.ENUM("pm", "tst"),
+        allowNull: false
     }
 },
 {

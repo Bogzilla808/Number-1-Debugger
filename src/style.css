@@ -170,3 +170,39 @@
     }
   }
     
+  /* Logo button */
+.logo-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* User info container */
+.user-info {
+  position: relative;      /* needed for dropdown positioning */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* Dropdown menu */
+.account-dropdown {
+  position: absolute;
+  top: 100%;              /* place below user-info */
+  right: 0;
+  background-color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-dropdown button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}

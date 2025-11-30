@@ -24,7 +24,7 @@ function Dashboard() {
         </button>
       </form>
 
-      <div className="projectsListContainer" style={{ marginTop: "2rem" }}>
+      <div className="main-content">
         <ul>
           {projects.map((proj, i) => (
             <li key={i}>

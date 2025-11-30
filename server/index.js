@@ -4,12 +4,11 @@ import "./models/index.js";
 import authRoutes from "./routes/authRoutes.js"
 import cors from "cors";
 
+const PORT = 3001;
+
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// register routes
-app.use("/auth", authRoutes);
 
 // create tables automatically
 try {
@@ -19,4 +18,7 @@ try {
     console.error("DB sync error:", err);
 }
 
-app.listen(3001, () => console.log("Server running on http://localhost:3001"));
+// register routes
+app.use("/auth", authRoutes);
+
+app.listen(PORT, () => console.log("Server running on http://localhost:3001"));

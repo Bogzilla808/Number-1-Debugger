@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
@@ -10,28 +11,30 @@ function AuthPage() {
     navigate("/dashboard");
   };
 
-const handleRegister = async (e) => {
-    e.preventDefault(); 
+  const {login} = useAuth();
+  const handleRegister = async (e) => {
+      e.preventDefault(); 
 
-    const name = document.getElementById("registerName").value;
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
+      const name = document.getElementById("registerName").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const role = document.getElementById("role").value;
 
-    const response = await fetch("http://localhost:3001/auth/register", {
-      method: "POST",
-      headers: { "Content-Type" : "application/json"},
-      body: JSON.stringify({email, password, name})
-    });
-    console.log("test");
-    const data = await response.json();
+      const response = await fetch("http://localhost:3001/auth/register", {
+        method: "POST",
+        headers: { "Content-Type" : "application/json"},
+        body: JSON.stringify({email, password, name, role})
+      });
+      
+      const data = await response.json();
 
-    if(response.ok) {
-      alert("Registered successfully!");
-      navigate("/dashboard");
-    } else {
-      alert("Registration failed: " + data.error);
-    }
-};
+      if(response.ok) {
+        login(data.user, data.token);
+        navigate("/dashboard");
+      } else {
+        alert("Registration failed: " + data.error);
+      }
+  };
 
   return (
     <div className="auth-container">
