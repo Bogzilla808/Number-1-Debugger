@@ -6,12 +6,28 @@ function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const {login} = useAuth();
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const response = await fetch("http://localhost:3001/auth/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({email, password})
+    });
+
+    const data = await response.json();
+
+    if(response.ok) {
+      login(data.user, data.token);
+      navigate("/dashboard");
+    } else {
+      alert("Login failed: " + data.error);
+    }
   };
 
-  const {login} = useAuth();
   const handleRegister = async (e) => {
       e.preventDefault(); 
 
