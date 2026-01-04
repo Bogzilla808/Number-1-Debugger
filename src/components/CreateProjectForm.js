@@ -1,17 +1,38 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Project from "./Projects.js";
+import { useAuth } from "../context/AuthContext";
 
 function CreateProjectForm() {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
   const [repoUrl, setRepoUrl] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    Project.addProject(projectName, description, repoUrl);
-    navigate("/dashboard");
+    
+    try {
+      const response = await fetch("http://localhost:3001/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: projectName,
+          description,
+          repo_url: repoUrl,
+          created_by_user_id: user.id
+        })
+      });
+
+      if (response.ok) {
+        navigate("/dashboard");
+      } else {
+        const data = await response.json();
+        alert("Failed to create project: " + data.error);
+      }
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
   };
 
   return (

@@ -2,6 +2,7 @@ import express from "express";
 import { db } from "./config.js";
 import "./models/index.js";
 import authRoutes from "./routes/authRoutes.js"
+import projectRoutes from "./routes/projectRoutes.js"
 import cors from "cors";
 
 const PORT = 3001;
@@ -20,5 +21,6 @@ try {
 
 // register routes
 app.use("/auth", authRoutes);
+app.use("/projects", projectRoutes);
 
 app.listen(PORT, () => console.log("Server running on http://localhost:3001"));

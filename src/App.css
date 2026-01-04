@@ -104,3 +104,50 @@
 .main-content {
   padding-top: 70px; /* should be slightly more than header height */
 }
+
+.project-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  /* border: 1px solid black; */
+  border-radius: 8px;
+  background-color: #211aa3;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.project-row:hover {
+  background-color: #1a4fa3;
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(160, 60, 255, 0.5);
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.project-desc {
+  font-size: 0.95rem;
+  color: #979797;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
