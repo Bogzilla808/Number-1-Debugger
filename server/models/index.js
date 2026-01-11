@@ -35,6 +35,8 @@ Project.belongsToMany(User, {
 // --- Bugs: One-to-Many ---
 Project.hasMany(Bug, { foreignKey: "project_id" , onDelete: "CASCADE"});
 Bug.belongsTo(Project, { foreignKey: "project_id" });
+User.hasMany(Bug, { foreignKey: "reporter_id" });
+Bug.belongsTo(User, { foreignKey: "reporter_id", as: "reporter" });
 
 export {
     User,
