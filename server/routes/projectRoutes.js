@@ -163,4 +163,95 @@ router.get("/:id/bugs", async (req, res) => {
   }
 });
 
+// Update bug status (only for bugs belonging to the project)
+router.patch("/:id/bugs/:bugId/status", async (req, res) => {
+  try {
+    const { status, userId } = req.body;
+    const allowed = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+    if (!status || !allowed.includes(status)) {
+      return res.status(400).json({ error: "Invalid or missing status" });
+    }
+
+    const bug = await Bug.findOne({ where: { id: req.params.bugId, project_id: req.params.id } });
+    if (!bug) return res.status(404).json({ error: "Bug not found" });
+
+    // If moving to IN_PROGRESS, set assigned_to to userId
+    if (status === "IN_PROGRESS") {
+      await bug.update({ status, assigned_to: userId || null });
+      return res.json(bug);
+    }
+
+    // If moving to RESOLVED, only allow if assigned_to matches userId
+    if (status === "RESOLVED") {
+      if (!bug.assigned_to || bug.assigned_to !== userId) {
+        return res.status(403).json({ error: "Only the assigned member can mark this bug as resolved" });
+      }
+      await bug.update({ status });
+      return res.json(bug);
+    }
+
+    // For other status changes, allow
+    await bug.update({ status });
+    res.json(bug);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update bug severity (only project members or testers)
+router.patch("/:id/bugs/:bugId/severity", async (req, res) => {
+  try {
+    const { severity, userId } = req.body;
+    const allowed = ["LOW", "MED", "HIGH", "CRITICAL", "MEDIUM", "MED"];
+    if (!severity || !["LOW","MED","HIGH","CRITICAL","MEDIUM","MED"].includes(severity)) {
+      return res.status(400).json({ error: "Invalid or missing severity" });
+    }
+
+    const project = await Project.findByPk(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    // verify user is either project creator, team member or tester
+    const isCreator = userId && Number(userId) === project.created_by_user_id;
+    const member = await ProjectTeamMembers.findOne({ where: { project_id: req.params.id, user_id: userId } });
+    const tester = await ProjectTesters.findOne({ where: { project_id: req.params.id, user_id: userId } });
+    if (!isCreator && !member && !tester) {
+      return res.status(403).json({ error: "User not authorized to change severity" });
+    }
+
+    const bug = await Bug.findOne({ where: { id: req.params.bugId, project_id: req.params.id } });
+    if (!bug) return res.status(404).json({ error: "Bug not found" });
+
+    await bug.update({ severity });
+    res.json(bug);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update bug priority (1-5) - allowed for creator, team members, testers
+router.patch("/:id/bugs/:bugId/priority", async (req, res) => {
+  try {
+    const { priority, userId } = req.body;
+    const p = Number(priority);
+    if (!p || p < 1 || p > 5) return res.status(400).json({ error: "Invalid priority (1-5)" });
+
+    const project = await Project.findByPk(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    const isCreator = userId && Number(userId) === project.created_by_user_id;
+    const member = await ProjectTeamMembers.findOne({ where: { project_id: req.params.id, user_id: userId } });
+    const tester = await ProjectTesters.findOne({ where: { project_id: req.params.id, user_id: userId } });
+    if (!isCreator && !member && !tester) {
+      return res.status(403).json({ error: "User not authorized to change priority" });
+    }
+
+    const bug = await Bug.findOne({ where: { id: req.params.bugId, project_id: req.params.id } });
+    if (!bug) return res.status(404).json({ error: "Bug not found" });
+
+    await bug.update({ priority: p });
+    res.json(bug);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 export default router;

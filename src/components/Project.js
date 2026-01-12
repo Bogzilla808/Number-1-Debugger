@@ -11,6 +11,7 @@ function Project() {
   const [bugs, setBugs] = useState([]);
   const [newBugDesc, setNewBugDesc] = useState("");
   const [severity, setSeverity] = useState("LOW");
+  const [priority, setPriority] = useState(3);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,6 +45,69 @@ function Project() {
     }
   }, [id, navigate]);
 
+  const isProjectMember = () => {
+    if (!project || !user) return false;
+    if (user.role === "pm") return true;
+    return project.teamMembers && project.teamMembers.some(m => m.id === user.id);
+  };
+
+  const updateBugStatus = async (bugId, newStatus) => {
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus, userId: user?.id })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || `Failed to update status: ${res.status}`);
+      }
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error("Failed to update bug status:", err);
+      alert("Failed to update bug status: " + err.message);
+    }
+  };
+
+  const updateBugSeverity = async (bugId, newSeverity) => {
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/severity`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ severity: newSeverity, userId: user?.id })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || 'Failed to update severity');
+      }
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error('Failed to update bug severity:', err);
+      alert('Failed to update bug severity: ' + err.message);
+    }
+  };
+
+  const updateBugPriority = async (bugId, newPriority) => {
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/priority`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priority: newPriority, userId: user?.id })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || 'Failed to update priority');
+      }
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error('Failed to update bug priority:', err);
+      alert('Failed to update bug priority: ' + err.message);
+    }
+  };
+
   const handleAddBug = async (e) => {
     e.preventDefault();
     if (!newBugDesc.trim()) return;
@@ -53,6 +117,7 @@ function Project() {
       severity: severity,
       description: newBugDesc,
       status: "OPEN",
+      priority: priority,
       created_at: new Date().toISOString()
     };
 
@@ -103,16 +168,54 @@ function Project() {
           <p>No bugs reported yet.</p>
         ) : (
           <ul style={{ listStyle: "none", padding: 0 }}>
-            {bugs.map((bug) => (
-              <li key={bug.id} style={{ background: "#222", padding: "1rem", marginBottom: "1rem", borderRadius: "5px", borderLeft: `5px solid ${getSeverityColor(bug.severity)}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div>
-                    <p style={{ margin: "0 0 0.5rem 0", fontWeight: "bold" }}>{bug.description}</p>
-                    <small style={{ color: "#888" }}>Status: {bug.status} | Severity: {bug.severity}</small>
+            {bugs.map((bug) => {
+              const nextStatus = getNextStatus(bug.status);
+              return (
+                <li key={bug.id} style={{ background: "#222", padding: "1rem", marginBottom: "1rem", borderRadius: "5px", borderLeft: `5px solid ${getSeverityColor(bug.severity)}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div>
+                      <p style={{ margin: "0 0 0.5rem 0", fontWeight: "bold" }}>{bug.description}</p>
+                      <small style={{ color: "#888" }}>Status: {bug.status} | </small>
+                      {user && user.role === 'tst' && project.testers && project.testers.some(t => t.id === user.id) ? (
+                        <>
+                          <select value={bug.severity} onChange={(e) => updateBugSeverity(bug.id, e.target.value)} style={{ marginLeft: 6 }}>
+                            <option value="LOW">Low</option>
+                            <option value="MED">Mid</option>
+                            <option value="HIGH">High</option>
+                          </select>
+                          <select value={bug.priority || 3} onChange={(e) => updateBugPriority(bug.id, Number(e.target.value))} style={{ marginLeft: 6 }}>
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option value={5}>5</option>
+                          </select>
+                        </>
+                      ) : (
+                        <small style={{ color: "#888" }}>{bug.severity} | P:{bug.priority || 3}</small>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      {isProjectMember() && (
+                        nextStatus ? (
+                          <button
+                            className="btn"
+                            style={{ background: nextStatus === "IN_PROGRESS" ? "#ff9900" : "#28a745" }}
+                            onClick={() => updateBugStatus(bug.id, nextStatus)}
+                          >
+                            Resolve Bug
+                          </button>
+                        ) : (
+                          <button className="btn" style={{ opacity: 0.6 }} disabled>
+                            Resolved
+                          </button>
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -145,6 +248,16 @@ function Project() {
                 <option value="CRITICAL">Critical</option>
               </select>
             </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ marginRight: "1rem" }}>Priority:</label>
+              <select value={priority} onChange={(e) => setPriority(Number(e.target.value))} style={{ padding: '0.5rem' }}>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+                <option value={5}>5</option>
+              </select>
+            </div>
 
             <button type="submit" className="btn">Add Bug</button>
           </form>
@@ -161,6 +274,17 @@ function getSeverityColor(severity) {
     case "MED": return "#00C851";
     default: return "#33b5e5";
   }
+}
+
+function getNextStatus(current) {
+  if (!current) return null;
+  const map = {
+    "OPEN": "IN_PROGRESS",
+    "IN_PROGRESS": "RESOLVED",
+    "RESOLVED": null,
+    "CLOSED": null
+  };
+  return map[current] || null;
 }
 
 export default Project;

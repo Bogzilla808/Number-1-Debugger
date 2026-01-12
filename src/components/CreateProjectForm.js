@@ -42,6 +42,68 @@ function CreateProjectForm() {
     }
   }, [projectToEdit]);
 
+  const getNextStatus = (current) => {
+    if (!current) return null;
+    const map = { OPEN: 'IN_PROGRESS', IN_PROGRESS: 'RESOLVED', RESOLVED: null, CLOSED: null };
+    return map[current] || null;
+  };
+
+  const updateBugStatus = async (bugId) => {
+    const next = getNextStatus(bugs.find(b => b.id === bugId)?.status);
+    if (!next) return;
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: next, userId: user?.id })
+      });
+      if (!res.ok) throw new Error('Failed to update status');
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error('Error updating bug status:', err);
+      alert('Error updating bug status: ' + err.message);
+    }
+  };
+
+  const updateBugSeverity = async (bugId, newSeverity) => {
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/severity`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ severity: newSeverity, userId: user?.id })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || 'Failed to update severity');
+      }
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error('Error updating bug severity:', err);
+      alert('Error updating bug severity: ' + err.message);
+    }
+  };
+
+  const updateBugPriority = async (bugId, newPriority) => {
+    try {
+      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/priority`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priority: newPriority, userId: user?.id })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || 'Failed to update priority');
+      }
+      const updated = await res.json();
+      setBugs(bugs.map(b => b.id === updated.id ? updated : b));
+    } catch (err) {
+      console.error('Error updating bug priority:', err);
+      alert('Error updating bug priority: ' + err.message);
+    }
+  };
+
   const handleSearchUsers = async (e) => {
     const query = e.target.value;
     setUserSearchQuery(query);
@@ -215,14 +277,53 @@ function CreateProjectForm() {
           ) : (
             <ul style={{ listStyle: "none", padding: 0 }}>
               {bugs.map((bug) => (
-                <li 
-                  key={bug.id} 
+                <li
+                  key={bug.id}
                   style={{ marginBottom: "0.5rem", background: "#444", padding: "0.5rem", borderRadius: "4px", cursor: "pointer" }}
                   onClick={() => setExpandedBugId(expandedBugId === bug.id ? null : bug.id)}
                 >
-                  <div style={{ fontWeight: "bold", display: "flex", justifyContent: "space-between" }}>
-                    <span>{bug.title || "Untitled Bug"}</span>
-                    <span style={{ fontSize: "0.8em", color: "#ccc" }}>{bug.severity}</span>
+                    <div style={{ fontWeight: "bold", display: "flex", justifyContent: "space-between", alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <span>{bug.title || "Untitled Bug"}</span>
+                      {user && user.role === 'tst' && projectToEdit && projectToEdit.testers && projectToEdit.testers.some(t => t.id === user.id) ? (
+                        <>
+                          <select value={bug.severity} onChange={(e) => { e.stopPropagation(); updateBugSeverity(bug.id, e.target.value); }}>
+                            <option value="LOW">Low</option>
+                            <option value="MED">Mid</option>
+                            <option value="HIGH">High</option>
+                          </select>
+                          <select value={bug.priority || 3} onChange={(e) => { e.stopPropagation(); updateBugPriority(bug.id, Number(e.target.value)); }} style={{ marginLeft: 6 }}>
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                            <option value={5}>5</option>
+                          </select>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: "0.8em", color: "#ccc" }}>{bug.severity} | P:{bug.priority || 3}</span>
+                      )}
+                    </div>
+                    <div>
+                      {user && user.role === 'pm' && (() => {
+                        const next = getNextStatus(bug.status);
+                        // If IN_PROGRESS, only the assigned_to user can advance to RESOLVED
+                        const locked = bug.status === 'IN_PROGRESS' && bug.assigned_to && bug.assigned_to !== user.id;
+                        return next ? (
+                          <button
+                            className="btn"
+                            style={{ background: next === 'IN_PROGRESS' ? '#ff9900' : '#28a745' }}
+                            onClick={(e) => { e.stopPropagation(); updateBugStatus(bug.id); }}
+                            disabled={locked}
+                            title={locked ? 'Only assigned member can resolve this bug' : ''}
+                          >
+                            Resolve Bug
+                          </button>
+                        ) : (
+                          <button className="btn" style={{ opacity: 0.6 }} disabled>Resolved</button>
+                        );
+                      })()}
+                    </div>
                   </div>
                   {expandedBugId === bug.id && (
                     <div style={{ marginTop: "0.5rem", borderTop: "1px solid #555", paddingTop: "0.5rem" }}>
