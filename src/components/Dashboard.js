@@ -15,7 +15,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/projects?userId=${user.id}`);
+        const response = await fetch(`https://number-1-debugger-api.onrender.com/projects?userId=${user.id}`);
         const data = await response.json();
         setProjects(data);
       } catch(err) {
@@ -31,7 +31,7 @@ function Dashboard() {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/projects/${id}`, {
+      const response = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}`, {
         method: "DELETE"
       });
 
@@ -64,7 +64,7 @@ function Dashboard() {
     if (!bugDescription.trim() || !bugTitle.trim()) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/projects/${projectId}/bugs`, {
+      const response = await fetch(`https://number-1-debugger-api.onrender.com/projects/${projectId}/bugs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

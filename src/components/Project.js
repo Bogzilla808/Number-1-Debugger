@@ -18,7 +18,7 @@ function Project() {
     const fetchProjectData = async () => {
       try {
         // Fetch project details
-        const projResponse = await fetch(`http://localhost:3001/projects/${id}`);
+        const projResponse = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}`);
         if (!projResponse.ok) {
           throw new Error("Project not found");
         }
@@ -26,7 +26,7 @@ function Project() {
         setProject(projData);
 
         // Fetch bugs for this project
-        const bugsResponse = await fetch(`http://localhost:3001/projects/${id}/bugs`);
+        const bugsResponse = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}/bugs`);
         if (bugsResponse.ok) {
           const bugsData = await bugsResponse.json();
           setBugs(bugsData);
@@ -53,7 +53,7 @@ function Project() {
 
   const updateBugStatus = async (bugId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/status`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}/bugs/${bugId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus, userId: user?.id })
@@ -72,7 +72,7 @@ function Project() {
 
   const updateBugSeverity = async (bugId, newSeverity) => {
     try {
-      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/severity`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}/bugs/${bugId}/severity`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ severity: newSeverity, userId: user?.id })
@@ -91,7 +91,7 @@ function Project() {
 
   const updateBugPriority = async (bugId, newPriority) => {
     try {
-      const res = await fetch(`http://localhost:3001/projects/${id}/bugs/${bugId}/priority`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}/bugs/${bugId}/priority`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priority: newPriority, userId: user?.id })
@@ -122,7 +122,7 @@ function Project() {
     };
 
     try {
-      const response = await fetch(`http://localhost:3001/projects/${id}/bugs`, {
+      const response = await fetch(`https://number-1-debugger-api.onrender.com/projects/${id}/bugs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newBug)

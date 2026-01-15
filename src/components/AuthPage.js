@@ -12,7 +12,7 @@ function AuthPage() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
 
-    const response = await fetch("http://localhost:3001/auth/login", {
+    const response = await fetch("https://number-1-debugger-api.onrender.com/auth/login", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({email, password})
@@ -36,7 +36,7 @@ function AuthPage() {
       const password = document.getElementById("registerPassword").value;
       const role = document.getElementById("role").value;
 
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch("https://number-1-debugger-api.onrender.com/auth/register", {
         method: "POST",
         headers: { "Content-Type" : "application/json"},
         body: JSON.stringify({email, password, name, role})

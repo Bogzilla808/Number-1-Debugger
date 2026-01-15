@@ -29,7 +29,7 @@ function CreateProjectForm() {
 
       const fetchBugs = async () => {
         try {
-          const response = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs`);
+          const response = await fetch(`https://number-1-debugger-api.onrender.com/projects/${projectToEdit.id}/bugs`);
           if (response.ok) {
             const data = await response.json();
             setBugs(data);
@@ -52,7 +52,7 @@ function CreateProjectForm() {
     const next = getNextStatus(bugs.find(b => b.id === bugId)?.status);
     if (!next) return;
     try {
-      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/status`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${projectToEdit.id}/bugs/${bugId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: next, userId: user?.id })
@@ -68,7 +68,7 @@ function CreateProjectForm() {
 
   const updateBugSeverity = async (bugId, newSeverity) => {
     try {
-      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/severity`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${projectToEdit.id}/bugs/${bugId}/severity`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ severity: newSeverity, userId: user?.id })
@@ -87,7 +87,7 @@ function CreateProjectForm() {
 
   const updateBugPriority = async (bugId, newPriority) => {
     try {
-      const res = await fetch(`http://localhost:3001/projects/${projectToEdit.id}/bugs/${bugId}/priority`, {
+      const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/${projectToEdit.id}/bugs/${bugId}/priority`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priority: newPriority, userId: user?.id })
@@ -109,7 +109,7 @@ function CreateProjectForm() {
     setUserSearchQuery(query);
     if (query.length > 2) {
       try {
-        const res = await fetch(`http://localhost:3001/projects/search-users?q=${query}`);
+        const res = await fetch(`https://number-1-debugger-api.onrender.com/projects/search-users?q=${query}`);
         const data = await res.json();
         setUserSearchResults(data);
       } catch (err) {
@@ -135,8 +135,8 @@ function CreateProjectForm() {
     
     try {
       const url = projectToEdit 
-        ? `http://localhost:3001/projects/${projectToEdit.id}`
-        : "http://localhost:3001/projects";
+        ? `https://number-1-debugger-api.onrender.com/projects/${projectToEdit.id}`
+        : "https://number-1-debugger-api.onrender.com/projects";
       const method = projectToEdit ? "PUT" : "POST";
 
       const response = await fetch(url, {
